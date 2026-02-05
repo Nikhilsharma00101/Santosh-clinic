@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, MotionValue } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { Quote, CheckCircle2, Heart, Fingerprint } from "lucide-react";
 import { GradientText } from "@/components/ui/gradient-text";
 
@@ -48,30 +47,15 @@ const reviews = [
     }
 ];
 
-function CaseFileCard({ review, index, total, scrollProgress }: { review: typeof reviews[0], index: number, total: number, scrollProgress: MotionValue<number> }) {
-    // Each card starts being revealed at a specific point in the scroll
-    const start = index / total;
-    const end = (index + 1) / total;
-
-    // Position/Scale transforms
-    const translateY = useTransform(scrollProgress, [start, end], [0, -500]);
-    const rotate = useTransform(scrollProgress, [start, end], [0, -15]);
-    const opacity = useTransform(scrollProgress, [start - 0.1, start, end, end + 0.1], [0.8, 1, 1, 0]);
-    const scale = useTransform(scrollProgress, [start - 0.1, start], [0.95, 1]);
-
+function CaseFileCard({ review, index }: { review: typeof reviews[0], index: number }) {
     return (
-        <motion.div
+        <div
+            className="sticky top-32 mb-8 w-full"
             style={{
-                y: translateY,
-                rotate,
-                opacity,
-                scale,
-                zIndex: total - index,
-                perspective: "1000px"
+                zIndex: index + 1,
             }}
-            className="absolute inset-0 flex items-center justify-center p-4 md:p-0"
         >
-            <div className="relative w-full max-w-2xl bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-black/5 overflow-hidden flex flex-col md:flex-row min-h-[450px] md:min-h-0">
+            <div className="relative w-full max-w-4xl mx-auto bg-white rounded-[2rem] md:rounded-[2.5rem] shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] border border-black/5 overflow-hidden flex flex-col md:flex-row min-h-[450px] md:min-h-0">
                 {/* Folder Tab Aesthetic */}
                 <div className="absolute top-0 left-0 px-4 md:px-6 py-1.5 md:py-2 bg-black/[0.03] border-b border-r border-black/5 rounded-br-xl md:rounded-br-2xl font-mono text-[8px] md:text-[9px] tracking-widest text-black/40">
                     CASE_FILE // {review.id}
@@ -140,57 +124,25 @@ function CaseFileCard({ review, index, total, scrollProgress }: { review: typeof
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 }
 
 export function Testimonials() {
-    const sectionRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end end"]
-    });
-
     return (
         <section
-            ref={sectionRef}
-            className="relative h-[400vh] bg-[#f8fafc]"
+            className="relative py-32 bg-[#f8fafc]"
             id="testimonials"
         >
-            <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden">
-                {/* Background Atmosphere - "Clinical Chromesthesia" */}
-                <div className="absolute inset-0 pointer-events-none">
+            <div className="w-full flex flex-col items-center justify-center">
+                {/* Background Atmosphere - Simplified (No Heavy Animations) */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
                     {/* Base Clinical Layer */}
                     <div className="absolute inset-0 bg-[#f8fafc]" />
 
-                    {/* Animated Plasma Orbs */}
-                    <motion.div
-                        animate={{
-                            scale: [1, 1.2, 1],
-                            x: [0, 50, 0],
-                            y: [0, 30, 0],
-                            opacity: [0.3, 0.5, 0.3]
-                        }}
-                        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute -top-[10%] -left-[5%] w-[70%] h-[70%] rounded-full bg-neon-cyan/10 blur-[120px]"
-                    />
-                    <motion.div
-                        animate={{
-                            scale: [1.3, 1, 1.3],
-                            x: [0, -60, 0],
-                            y: [0, -40, 0],
-                            opacity: [0.2, 0.4, 0.2]
-                        }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-                        className="absolute -bottom-[10%] -right-[5%] w-[80%] h-[80%] rounded-full bg-neon-blue/10 blur-[140px]"
-                    />
-
-                    {/* The "Physical Scanner" Beam */}
-                    <motion.div
-                        animate={{ top: ["-100%", "200%"] }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-x-0 h-[400px] bg-gradient-to-b from-transparent via-white/40 to-transparent -skew-y-12 opacity-50 z-0"
-                    />
+                    {/* Static Ambient Orbs */}
+                    <div className="absolute -top-[10%] -left-[5%] w-[70%] h-[70%] rounded-full bg-neon-cyan/5 blur-[120px]" />
+                    <div className="absolute -bottom-[10%] -right-[5%] w-[80%] h-[80%] rounded-full bg-neon-blue/5 blur-[140px]" />
 
                     {/* Technical Foundations */}
                     <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] bg-[size:60px_60px]" />
@@ -199,26 +151,18 @@ export function Testimonials() {
                     {/* Fine Texture Grain */}
                     <div className="absolute inset-0 opacity-[0.02] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
 
-                    {/* Floating Tech Elements */}
-                    <motion.div
-                        animate={{ opacity: [0.1, 0.2, 0.1], y: [0, -20, 0] }}
-                        transition={{ duration: 5, repeat: Infinity }}
-                        className="absolute top-[18%] md:top-[15%] right-[5%] md:right-[10%] text-[15vw] md:text-[10vw] font-display font-black text-black/[0.01] uppercase"
-                    >
+                    {/* Static Tech Elements */}
+                    <div className="absolute top-[18%] md:top-[15%] right-[5%] md:right-[10%] text-[15vw] md:text-[10vw] font-display font-black text-black/[0.01] uppercase">
                         Trust
-                    </motion.div>
-                    <motion.div
-                        animate={{ opacity: [0.1, 0.2, 0.1], y: [0, 20, 0] }}
-                        transition={{ duration: 7, repeat: Infinity }}
-                        className="absolute bottom-[18%] md:bottom-[15%] left-[5%] md:left-[10%] text-[15vw] md:text-[10vw] font-display font-black text-black/[0.01] uppercase"
-                    >
+                    </div>
+                    <div className="absolute bottom-[18%] md:bottom-[15%] left-[5%] md:left-[10%] text-[15vw] md:text-[10vw] font-display font-black text-black/[0.01] uppercase">
                         Care
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* Section Header */}
-                <div className="absolute top-4 md:top-8 left-0 w-full px-4 md:px-12 z-20">
-                    <div className="flex flex-col md:flex-row gap-8 md:items-end justify-between">
+                <div className="relative w-full px-4 md:px-12 z-20 mb-20">
+                    <div className="flex flex-col md:flex-row gap-8 md:items-end justify-between max-w-[1600px] mx-auto">
                         <div className="space-y-4 md:space-y-6 max-w-4xl text-left">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -247,30 +191,24 @@ export function Testimonials() {
                     </div>
                 </div>
 
-                {/* The Shuffling Stack */}
-                <div className="relative w-full h-[550px] md:h-[600px] max-w-5xl mx-auto z-10 px-4 md:px-0 mt-[17rem] md:mt-64 lg:mt-[22rem]">
+                {/* The Stacked Cards */}
+                <div className="w-full px-4 md:px-0 max-w-5xl mx-auto z-10 pb-20">
                     {reviews.map((review, index) => (
                         <CaseFileCard
                             key={index}
                             review={review}
                             index={index}
-                            total={reviews.length}
-                            scrollProgress={scrollYProgress}
                         />
                     ))}
                 </div>
 
                 {/* Bottom Navigation Prompt */}
-                {/* Bottom Navigation Prompt */}
-                <div className="absolute bottom-2 md:bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 md:gap-3 z-20 pointer-events-none">
+                <div className="flex flex-col items-center gap-2 md:gap-3 z-20">
                     <div className="w-px h-8 md:h-12 bg-gradient-to-b from-black/5 via-black/20 to-transparent relative overflow-hidden">
-                        <motion.div
-                            animate={{ y: [0, 64] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                            className="absolute top-0 left-0 w-full h-4 bg-neon-cyan"
-                        />
+                        {/* Simple CSS animation instead of Framer Motion loop ideally, or just static */}
+                        <div className="absolute top-0 left-0 w-full h-4 bg-neon-cyan animate-bounce" />
                     </div>
-                    <span className="text-[7px] md:text-[9px] font-mono tracking-[0.2em] text-black/30 uppercase">Shuffle Archives</span>
+                    <span className="text-[7px] md:text-[9px] font-mono tracking-[0.2em] text-black/30 uppercase">Scroll for more</span>
                 </div>
             </div>
         </section>
